@@ -13,6 +13,7 @@ const connectDB = require("./config/connectDb");
 const { globalErrorHandler } = require("./middleware/globalErrorHandler.middleware");
 const router = require("./routes/index.routes");
 const { connectCloudinary } = require("./config/cloudinary");
+const morgan = require("morgan")
 
 
 
@@ -29,7 +30,7 @@ connectDB();
 
 // Initialize app
 const app = express();
-
+app.use(morgan('dev'))
 connectCloudinary();
 
 // Middlewares

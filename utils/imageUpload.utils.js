@@ -10,7 +10,7 @@ const imageUploader = async (file, imageFileName) => {
         {
           folder: "products",
           public_id: `${imageFileName}-${Date.now()}`,
-          resource_type: "image",
+          resource_type: "auto",
         },
         (err, result) => {
           if (err) return reject(err);
@@ -60,6 +60,8 @@ const imageUploader = async (file, imageFileName) => {
 
   throw new Error("Unsupported file format: no buffer or tempFilePath found.");
 };
+
+
 
 module.exports = imageUploader;
 

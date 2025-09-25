@@ -1,7 +1,7 @@
 const express = require("express");
 const sharp = require("sharp");
 const authRoutes = require("../routes/auth.routes");
-
+const multer = require('multer')
 const adminRoutes = require("../routes/admin/index.routes");
 const {
     getAllProducts,
@@ -29,8 +29,13 @@ const {
 } = require("../controller/public/product/offer.controller");
 const { blogRouter } = require("./blog.routes");
 const { commentRouter } = require("./comment.routes");
+const { homeRouter } = require("../routes/home/home.routes");
 
-
+const { uploadVideoToCloudinary } = require("../utils/videoUpload");
+// Multer setup for memory storage
+// Multer memory storage
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 const router = express.Router();
 
 router.use("/auth", authRoutes);
@@ -41,6 +46,9 @@ router.use("/payment", paymentRoutes);
 router.use('/blogs', blogRouter)
 // ------------------------------------Comments Api-------------------------------------
 router.use('/comments', commentRouter)
+// Home Page Edit Apis =>
+router.use('/home', homeRouter)
+
 // Public routes
 // Products
 router.get("/products", getAllProducts);
@@ -80,13 +88,7 @@ router.post("/upload", async (req, res) => {
                 return res.status(400).json({ success: false, message: "Uploaded image is empty" });
             }
 
-            // Limit to 8MB
-            //   if (image.size > 8 * 1024 * 1024) {
-            //     return res.status(400).json({
-            //       success: false,
-            //       message: "Image size should not exceed 8MB",
-            //     });
-            //   }
+
 
             // Compress and resize using Sharp
             const compressedBuffer = await sharp(image.data)
@@ -114,6 +116,27 @@ router.post("/upload", async (req, res) => {
     }
 });
 
+// POST /upload/video
+router.post("/upload/video", async (req, res) => {
+    try {
+        const videos = req.files?.files ?? req.files ?? null;
+        console.log('VIDEO', videos)
+        const folderName = req.body.name || "home_videos";
+        const uploadResult = await uploadVideoToCloudinary(videos.data, folderName);
+        console.log('Upload Result ->', uploadResult)
+        res.status(200).json({
+            success: true,
+            message: "Videos uploaded successfully",
+            data: uploadResult,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: err.message,
+        });
+    }
+});
 
 
 
