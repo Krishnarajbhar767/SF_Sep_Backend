@@ -131,7 +131,7 @@ const getBlogs = async (req, res) => {
         if (cached) return res.success("Blogs fetched (cache)", cached);
 
         const blogs = await BlogModel.find({ status: true })
-            .select("title slug coverImage tags createdAt")
+            .select("title slug coverImage tags content createdAt")
             .sort({ createdAt: -1 })
             .lean();
 
