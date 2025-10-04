@@ -94,8 +94,8 @@ const createProduct = asyncHandler(async (req, res) => {
 });
 
 const updateProduct = asyncHandler(async (req, res) => {
-    const cacheKey = `product${_id}`
     const _id = req.params?.id || req.body?.id;
+    const cacheKey = `product${_id}`
     const payload = req.body;
 
     if (!_id) return res.error("Product ID is required", 400);
